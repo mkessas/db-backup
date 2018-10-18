@@ -8,8 +8,6 @@ from colors import bcolors
 from mongo import Mongo
 from maria import Maria
 
-mongo = Mongo()
-maria = Maria()
 
 def configure_logging(level):
     logger = logging.getLogger()
@@ -36,8 +34,19 @@ def read_conf(file):
 
 
 args = parse_args()
-parser = read_conf(args.conf)
+conf = read_conf(args.conf)
+logger = configure_logging(conf.get("general", "level"))
 
-logger = configure_logging(parser.get("general", "level"))
+for name in [ "maria", "mongo" ]:
+    if conf.get(name, "enabled") == "true":
+        db = eval(name.capitalize() + "()")
 
-print "got here"
+        try:
+            logger.info("Detecting " + name + " client")
+            db.detect_client()
+        except:
+            logger.error("Client for " + name + " not detected, skipping")
+            continue
+        
+        logger.info("Beginning backup")
+        db.do_backup()

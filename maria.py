@@ -9,4 +9,4 @@ class Maria(db.Database):
         pass
     
     def detect_client(self):
-        pass
+        print "Performing MariaDB Backup"

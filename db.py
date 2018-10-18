@@ -12,4 +12,3 @@ class Database():
     @abc.abstractmethod
     def detect_client(self):
         pass
-
