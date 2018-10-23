@@ -7,7 +7,7 @@ import os
 from colors import bcolors
 from mongo import Mongo
 from maria import Maria
-
+from s3 import S3
 
 def configure_logging(level):
     logger = logging.getLogger()
@@ -33,12 +33,20 @@ def read_conf(file):
     return parser
 
 
+# Parse command line arguments
 args = parse_args()
+
+# Parse configuration file
 conf = read_conf(args.conf)
 logger = configure_logging(conf.get("general", "level"))
 
+s3 = S3()
+
+# Perform Backup for each database engine
 for name in [ "maria", "mongo" ]:
+
     if conf.get(name, "enabled") == "true":
+
         db = eval(name.capitalize() + "(conf)")
 
         try:
@@ -47,7 +55,16 @@ for name in [ "maria", "mongo" ]:
             logger.error("Client for " + name + " not detected, skipping")
             continue
 
+        # Validate S3 Bucket destination
+        logger.info("Checking S3 bucket '" + conf.get(name, "s3_bucket") + "'")
 
+        ret, err = s3.check_bucket(conf.get(name, "s3_bucket"))
+        if err != '':
+            logger.error("Bucket  not found: " + err.strip())
+            exit(1)
+        else:
+            logger.info("Bucket found")
+            
         if conf.get(name, "databases") == '*':
             err = db.backup_all_dbs()
             if err != '':

@@ -2,7 +2,7 @@ import db
 import logging
 import time
 from util import Util
-
+from s3 import S3
 
 class Maria(db.Database):
 
@@ -21,8 +21,7 @@ class Maria(db.Database):
     def backup_db(self, db):
         self.logger.info("Backing up database '" + db + "'")
         
-        tmpfile = self.conf.get("general", "tmp") + "/.backup-" + db + ".sql"
-
+        tmpfile = "backup-" + db + "-" + time.strftime('%Y%m%d', time.localtime()) + ".sql"
         start = time.time()
         cmd = ["mysqldump"] + self.conf.get('maria', 'options').split(" ") + [
             "-u", self.conf.get('maria','username'), 
@@ -34,19 +33,21 @@ class Maria(db.Database):
         stream = Util.stream(cmd)
 
         if self.conf.get("maria", "compress") == "true":
-            tmpfile = tmpfile + ".gz"
-            stream = Util.stream(["gzip", "-9"], stream.stdout)
+            tmpfile += ".gz"
+            gzip = Util.stream(["gzip", "-9"], stream.stdout)
+            stream.stdout.close()
+            stream = gzip
 
-        data, err = stream.communicate()
-
-        with file(tmpfile, 'w') as fp:
-            fp.write(data)
+        aws = S3.stream(self.conf.get("maria","s3_bucket") + "/" + tmpfile, stream.stdout)
+        stream.stdout.close()
+        
+        err = aws.communicate()[1]
 
         if err == '':
             self.logger.info("Backup of '" + db + "' completed in " + str(time.time() - start) + " seconds")
             return None
         else:
-            return err.rstrip()
+            return err.strip()
 
     def backup_all_dbs(self):
 
@@ -56,12 +57,11 @@ class Maria(db.Database):
             return err.rstrip()
 
         for db in dbs.rstrip().split('\n'):
-            backup, err = self.backup_db(db)
-            if err != '':
-                self.logger.error(err.rstrip())
+            err = self.backup_db(db)
+            if err != None:
+                self.logger.error(err.strip())
                 continue
 
-            print backup
 
     def get_db_names(self):
         self.logger.info("Retrieving list of databases...")

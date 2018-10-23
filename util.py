@@ -14,5 +14,4 @@ class Util():
 
     @staticmethod
     def stream(cmd, input=PIPE):
-        print cmd
         return Popen(" ".join(cmd), stdout=PIPE, stderr=PIPE, stdin=input, shell=True)
