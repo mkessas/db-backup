@@ -7,7 +7,7 @@ class Database():
     __metaclass__ = ABCMeta
 
     @abc.abstractmethod
-    def do_backup(self):
+    def backup_db(self):
         pass
     
     @abc.abstractmethod
@@ -16,4 +16,12 @@ class Database():
 
     @abc.abstractmethod
     def cleanup(self):
+        pass
+    
+    @abc.abstractmethod
+    def backup_all_dbs(self):
+        pass
+
+    @abc.abstractmethod
+    def get_db_names(self):
         pass

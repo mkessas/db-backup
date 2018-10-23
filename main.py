@@ -39,7 +39,7 @@ logger = configure_logging(conf.get("general", "level"))
 
 for name in [ "maria", "mongo" ]:
     if conf.get(name, "enabled") == "true":
-        db = eval(name.capitalize() + "()")
+        db = eval(name.capitalize() + "(conf)")
 
         try:
             db.detect_client()
@@ -47,6 +47,8 @@ for name in [ "maria", "mongo" ]:
             logger.error("Client for " + name + " not detected, skipping")
             continue
         
-        db.do_backup()
+        err = db.backup_all_dbs()
+        if err != '':
+            logger.error(err)
 
         db.cleanup()
