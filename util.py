@@ -13,6 +13,6 @@ class Util():
 
 
     @staticmethod
-    def stream(cmd):
-        p = Popen(" ".join(cmd), stdout=PIPE, shell=True)
-        return p.communicate()
+    def stream(cmd, input=PIPE):
+        print cmd
+        return Popen(" ".join(cmd), stdout=PIPE, stderr=PIPE, stdin=input, shell=True)

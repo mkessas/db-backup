@@ -31,8 +31,13 @@ class Maria(db.Database):
             db,
         ]
 
-        data, err = Util.stream(cmd)
+        stream = Util.stream(cmd)
 
+        if self.conf.get("maria", "compress") == "true":
+            tmpfile = tmpfile + ".gz"
+            stream = Util.stream(["gzip", "-9"], stream.stdout)
+
+        data, err = stream.communicate()
 
         with file(tmpfile, 'w') as fp:
             fp.write(data)
@@ -41,7 +46,7 @@ class Maria(db.Database):
             self.logger.info("Backup of '" + db + "' completed in " + str(time.time() - start) + " seconds")
             return None
         else:
-            return err
+            return err.rstrip()
 
     def backup_all_dbs(self):
 
