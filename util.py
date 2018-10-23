@@ -10,3 +10,9 @@ class Util():
         #rc = p.returncode
         
         return output, err
+
+
+    @staticmethod
+    def stream(cmd):
+        p = Popen(" ".join(cmd), stdout=PIPE, shell=True)
+        return p.communicate()

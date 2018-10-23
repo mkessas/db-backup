@@ -46,9 +46,18 @@ for name in [ "maria", "mongo" ]:
         except:
             logger.error("Client for " + name + " not detected, skipping")
             continue
-        
-        err = db.backup_all_dbs()
-        if err != '':
-            logger.error(err)
+
+
+        if conf.get(name, "databases") == '*':
+            err = db.backup_all_dbs()
+            if err != '':
+                logger.error(err)
+                continue
+        else:
+            for name in conf.get(name, "databases").split(','):
+                err = db.backup_db(name.rstrip())
+                if err != None:
+                    logger.error(err)
+
 
         db.cleanup()

@@ -17,10 +17,12 @@ class Mongo(db.Database):
         self.logger.info("Performing MongoDB Backup...")
 
     def backup_all_dbs(self):
+        self.logger.info("Backing up all databases")
         pass
 
     def get_db_names(self):
-        pass
+        self.logger.info("Getting list of databases")
+        return ""
 
     def cleanup(self):
         pass
