@@ -1,5 +1,6 @@
 import db
 import logging
+from util import Util
 
 class Mongo(db.Database):
 
@@ -8,7 +9,14 @@ class Mongo(db.Database):
         pass
 
     def detect_client(self):
-        pass
+        self.logger.info("Detecting MongoDB Client...")
+        Util.run(["mongodump", "--version" ] )
+        self.logger.info("mongodump found, continuing")
+
 
     def do_backup(self):
-        self.logger.info("Performing MongoDB Backup")
+        self.logger.info("Performing MongoDB Backup...")
+
+    def cleanup(self):
+        pass
+

@@ -42,11 +42,11 @@ for name in [ "maria", "mongo" ]:
         db = eval(name.capitalize() + "()")
 
         try:
-            logger.info("Detecting " + name + " client")
             db.detect_client()
         except:
             logger.error("Client for " + name + " not detected, skipping")
             continue
         
-        logger.info("Beginning backup")
         db.do_backup()
+
+        db.cleanup()

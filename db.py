@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 import abc
 
+
 class Database():
 
     __metaclass__ = ABCMeta
@@ -11,4 +12,8 @@ class Database():
     
     @abc.abstractmethod
     def detect_client(self):
+        pass
+
+    @abc.abstractmethod
+    def cleanup(self):
         pass
