@@ -39,6 +39,12 @@ class Mongo(db.Database):
 
         stream = Util.stream(cmd)
 
+        if self.conf.get("mongo", "encrypt") == "true":
+            tmpfile += ".enc"
+            enc = Util.stream(["openssl", "enc", "-aes-256-cbc", "-k", self.conf.get("general", "key")], stream.stdout)
+            stream.stdout.close()
+            stream = enc
+
         aws = S3.stream(self.conf.get("mongo","s3_bucket") + "/mongo/" + tmpfile, stream.stdout)
         stream.stdout.close()
         

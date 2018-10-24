@@ -38,6 +38,12 @@ class Maria(db.Database):
             stream.stdout.close()
             stream = gzip
 
+        if self.conf.get("maria", "encrypt") == "true":
+            tmpfile += ".enc"
+            enc = Util.stream(["openssl", "enc", "-aes-256-cbc", "-k", self.conf.get("general", "key")], stream.stdout)
+            stream.stdout.close()
+            stream = enc
+
         aws = S3.stream(self.conf.get("maria","s3_bucket") + "/maria/" + tmpfile, stream.stdout)
         stream.stdout.close()
         
