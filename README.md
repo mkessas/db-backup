@@ -1,4 +1,4 @@
-# Database Backup Script
+# Database Backup Script  [![Build status](https://9spokes.visualstudio.com/9Spokes/_apis/build/status/infra/db-backup)](https://9spokes.visualstudio.com/9Spokes/_build/latest?definitionId=74)
 
 ## Overview
 
