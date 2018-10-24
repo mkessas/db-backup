@@ -45,7 +45,7 @@ class Mongo(db.Database):
             stream.stdout.close()
             stream = enc
 
-        aws = S3.stream(self.conf.get("mongo","s3_bucket") + "/mongo/" + tmpfile, stream.stdout)
+        aws = S3.stream(self.conf.get("mongo","s3_bucket") + "/" + tmpfile, stream.stdout)
         stream.stdout.close()
         
         err = aws.communicate()[1]

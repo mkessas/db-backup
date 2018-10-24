@@ -67,7 +67,7 @@ for name in [ "maria", "mongo" ]:
             
         if conf.get(name, "databases") == '*':
             err = db.backup_all_dbs()
-            if err != '':
+            if err != None:
                 logger.error(err)
                 continue
         else:

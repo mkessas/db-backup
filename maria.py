@@ -44,7 +44,7 @@ class Maria(db.Database):
             stream.stdout.close()
             stream = enc
 
-        aws = S3.stream(self.conf.get("maria","s3_bucket") + "/maria/" + tmpfile, stream.stdout)
+        aws = S3.stream(self.conf.get("maria","s3_bucket") + "/" + tmpfile, stream.stdout)
         stream.stdout.close()
         
         err = aws.communicate()[1]
