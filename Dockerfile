@@ -4,5 +4,5 @@ COPY aws /root/.aws
 WORKDIR /opt/9spokes/backup
 RUN [ "apt-get", "update" ]
 RUN [ "apt-get", "install", "awscli", "python2.7", "mariadb-client", "mongodb-clients", "-y" ]
-RUN [ "ln", "-s", "/bin/python2.7", "/bin/python" ]
+RUN [ "ln", "-s", "/usr/bin/python2.7", "/usr/bin/python" ]
 ENTRYPOINT [ "python", "main.py" ]
